@@ -30,13 +30,6 @@
             height: 400px;
             margin-bottom: 40px;
         }
-        .explanation {
-            background-color: #f1f8ff;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            border-left: 4px solid #4a7ebb;
-        }
         .tabs {
             display: flex;
             margin-bottom: 20px;
@@ -63,29 +56,26 @@
         .tab-content.active {
             display: block;
         }
-        .highlight {
-            background-color: #fffde7;
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
         .text-sample {
-            background-color: #f5f5f5;
+            background-color: #f9f9f9;
             padding: 15px;
             border-radius: 5px;
             margin: 15px 0;
-            white-space: pre-wrap;
-            font-family: monospace;
+            line-height: 1.8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 14px;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
         }
-        .correct {
-            background-color: #e8f5e9;
-            border-left: 4px solid #4caf50;
+        .correct-word {
+            background-color: rgba(76, 175, 80, 0.2);
+            border-radius: 3px;
+            padding: 2px 0;
         }
-        .incorrect {
-            background-color: #ffebee;
-            border-left: 4px solid #f44336;
+        .incorrect-word {
+            background-color: rgba(244, 67, 54, 0.2);
+            border-radius: 3px;
+            padding: 2px 0;
         }
         .legend {
             display: flex;
@@ -102,484 +92,261 @@
             border-radius: 3px;
             margin-right: 8px;
         }
+        .accuracy-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .high-accuracy {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #2e7d32;
+        }
+        .medium-accuracy {
+            background-color: rgba(255, 193, 7, 0.2);
+            color: #ff8f00;
+        }
+        .low-accuracy {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: #c62828;
+        }
+        .layer-selector {
+            margin-bottom: 20px;
+        }
+        .layer-selector select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: white;
+            font-size: 14px;
+        }
+        .accuracy-meter {
+            height: 10px;
+            width: 100%;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .accuracy-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Neural Network Layer Analysis</h1>
         
-        <div class="explanation">
-            <h3>About This Analysis</h3>
-            <p>This visualization explores how information is processed through the layers of a neural network based on the provided example data. We examine two different approaches:</p>
-            <ul>
-                <li><strong>Progressive Inclusion</strong>: Starting with information from the initial layers and progressively adding information from subsequent layers.</li>
-                <li><strong>Progressive Deduction</strong>: Starting with information from all layers and progressively removing information from deeper layers.</li>
-            </ul>
-            <p>The accuracy scores shown for each layer configuration indicate how well the network reconstructs the original input text.</p>
-        </div>
-
         <div class="tabs">
             <button class="tab active" onclick="openTab(event, 'progressive-inclusion')">Progressive Inclusion</button>
             <button class="tab" onclick="openTab(event, 'progressive-deduction')">Progressive Deduction</button>
-            <button class="tab" onclick="openTab(event, 'layer-ablation')">Layer Ablation</button>
-            <button class="tab" onclick="openTab(event, 'comparison')">Comparison</button>
+            <button class="tab" onclick="openTab(event, 'charts')">Accuracy Charts</button>
         </div>
 
         <div id="progressive-inclusion" class="tab-content active">
             <h2>Progressive Inclusion Analysis</h2>
-            <p>This shows the accuracy as we progressively include information from more layers, starting from the earliest layers.</p>
+            <p>This analysis shows the accuracy of text reconstruction as we progressively include information from more layers.</p>
             
             <div class="legend">
                 <div class="legend-item">
-                    <div class="legend-color" style="background-color: #4a7ebb;"></div>
-                    <span>Accuracy</span>
+                    <div class="legend-color" style="background-color: rgba(76, 175, 80, 0.2);"></div>
+                    <span>Correct Words</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: rgba(244, 67, 54, 0.2);"></div>
+                    <span>Incorrect Words</span>
                 </div>
             </div>
             
-            <div class="chart-container">
-                <canvas id="progressiveInclusionChart"></canvas>
+            <div class="layer-selector">
+                <label for="pi-layer-select">Select Layer: </label>
+                <select id="pi-layer-select" onchange="updateProgressiveInclusionText()">
+                    <option value="1">Up to Layer 1 (29.1%)</option>
+                    <option value="2">Up to Layer 2 (28.6%)</option>
+                    <option value="3">Up to Layer 3 (23.3%)</option>
+                    <option value="4">Up to Layer 4 (25.4%)</option>
+                    <option value="5">Up to Layer 5 (28.0%)</option>
+                    <option value="6">Up to Layer 6 (41.3%)</option>
+                    <option value="7">Up to Layer 7 (44.4%)</option>
+                    <option value="8">Up to Layer 8 (52.4%)</option>
+                    <option value="9">Up to Layer 9 (67.2%)</option>
+                    <option value="10">Up to Layer 10 (99.5%)</option>
+                    <option value="11">Up to Layer 11 (100%)</option>
+                </select>
             </div>
-
-            <h3>Text Samples Comparison</h3>
-            <p>Comparing text reconstruction at different layer depths:</p>
             
-            <h4>Low Accuracy Layer (up_to_layer_3, Accuracy: 0.23)</h4>
-            <div class="text-sample incorrect">
-annual of computer learning by long the we learn the questions for the development. Comput networks are when by the enormous intuition, fundamental, have of four individuals, in a that Each cluster has one internal neighborhood, is whether shape; Every each, the connections limit generated according the involvementagandament to guide algorith bias. The- in this architecture by highlighting eight neural neural to such the process for participate for formulas.
-netsers testing networks can at observing- and manipulating this for reverse out critical of vis structural, During, the tasks networks ( much data, matching an associationized database, We that by to 1970, focusise the cognition processing. monitoring gibursion with gib. that consider the integrity of the broadcast's all particular better<|endoftext|> this made still to the in and deep learning biology computational manipulation, or general-,. the early, progress remain predominantly fashion where as taskability, paper study and and errorness. resultsarial analysis.
+            <div class="section-header">
+                <h3 id="pi-layer-title">Up to Layer 1</h3>
+                <span id="pi-accuracy-tag" class="accuracy-tag low-accuracy">Accuracy: 29.1%</span>
             </div>
             
-            <h4>High Accuracy Layer (up_to_layer_10, Accuracy: 0.99)</h4>
-            <div class="text-sample correct">
-The development of machine learning has transformed how we approach complex problems in computer science. Neural networks, inspired by the human brain's architecture, consist of interconnected nodes organized in layers. Each connection has an associated weight that determines its importance. During training, these weights are adjusted through backpropagation to minimize prediction errors. Deep learning extends this concept by employing multiple hidden layers, enabling the network to learn hierarchical features. Convolutional neural networks excel at image processing by applying filters to detect patterns regardless of their location. Meanwhile, recurrent neural networks handle sequential data by maintaining an internal memory state. Transformers, introduced in 2017, revolutionized natural language processing by replacing recurrence with attention mechanisms that weigh the importance of each element in a sequence. This innovation has led to breakthroughs in machine translation, text generation, and question answering systems. Despite these advances, challenges remain in areas such as interpretability, data efficiency, and robustness to adversarial examples.
+            <div class="accuracy-meter">
+                <div id="pi-accuracy-fill" class="accuracy-fill" style="width: 29.1%; background-color: #f44336;"></div>
             </div>
-
-            <h3>Key Insights:</h3>
-            <ul>
-                <li>Very low accuracy in early layers (up to layer 3) suggests these layers capture primarily low-level features</li>
-                <li>A significant jump in accuracy occurs around layer 9-10, suggesting these are critical integration layers</li>
-                <li>The text becomes coherent and meaningful only in the later layers (10+)</li>
-                <li>Layers 0-8 produce text that has some topical relevance but lacks cohesive structure and clarity</li>
-            </ul>
+            
+            <div id="pi-text-sample" class="text-sample">
+                Loading text comparison...
+            </div>
         </div>
 
         <div id="progressive-deduction" class="tab-content">
             <h2>Progressive Deduction Analysis</h2>
-            <p>This shows the accuracy as we progressively remove information from deeper layers, starting with all layers.</p>
+            <p>This analysis shows the accuracy of text reconstruction when starting from different layers and excluding deeper layers.</p>
             
             <div class="legend">
                 <div class="legend-item">
-                    <div class="legend-color" style="background-color: #e57373;"></div>
-                    <span>Accuracy</span>
+                    <div class="legend-color" style="background-color: rgba(76, 175, 80, 0.2);"></div>
+                    <span>Correct Words</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: rgba(244, 67, 54, 0.2);"></div>
+                    <span>Incorrect Words</span>
                 </div>
             </div>
             
-            <div class="chart-container">
-                <canvas id="progressiveDeductionChart"></canvas>
+            <div class="layer-selector">
+                <label for="pd-layer-select">Select Layer: </label>
+                <select id="pd-layer-select" onchange="updateProgressiveDeductionText()">
+                    <option value="0">From Layer 0 (100%)</option>
+                    <option value="1">From Layer 1 (51.3%)</option>
+                    <option value="2">From Layer 2 (43.9%)</option>
+                    <option value="3">From Layer 3 (33.9%)</option>
+                    <option value="4">From Layer 4 (28.6%)</option>
+                    <option value="5">From Layer 5 (24.9%)</option>
+                    <option value="6">From Layer 6 (22.2%)</option>
+                    <option value="7">From Layer 7 (28.6%)</option>
+                    <option value="8">From Layer 8 (29.1%)</option>
+                    <option value="9">From Layer 9 (29.6%)</option>
+                    <option value="10">From Layer 10 (32.3%)</option>
+                    <option value="11">From Layer 11 (31.2%)</option>
+                </select>
             </div>
-
-            <h3>Text Samples Comparison</h3>
-            <p>Comparing text reconstruction when starting from different layers:</p>
             
-            <h4>Starting from layer 0 (Accuracy: 1.0)</h4>
-            <div class="text-sample correct">
-The development of machine learning has transformed how we approach complex problems in computer science. Neural networks, inspired by the human brain's architecture, consist of interconnected nodes organized in layers. Each connection has an associated weight that determines its importance. During training, these weights are adjusted through backpropagation to minimize prediction errors. Deep learning extends this concept by employing multiple hidden layers, enabling the network to learn hierarchical features. Convolutional neural networks excel at image processing by applying filters to detect patterns regardless of their position. Meanwhile, recurrent neural networks handle sequential data by maintaining an internal memory state. Transformers, introduced in 2017, revolutionized natural language processing by replacing recurrence with attention mechanisms that weigh the importance of each element in a sequence. This innovation has led to breakthroughs in machine translation, text generation, and question answering systems. Despite these advances, challenges remain in areas such as interpretability, data efficiency, and robustness to adversarial examples.
+            <div class="section-header">
+                <h3 id="pd-layer-title">From Layer 0</h3>
+                <span id="pd-accuracy-tag" class="accuracy-tag high-accuracy">Accuracy: 100%</span>
             </div>
             
-            <h4>Starting from layer 5 (Accuracy: 0.49)</h4>
-            <div class="text-sample incorrect">
-But month struggle the learning through always this we govern complex languages in complex science. This networks shrink robotics by sensory evolution mind, acquisition, have of hundreds electrical that by tw below Each block has knowledge algorithm acronym. each that cod. Millions programs a a top move complex more back optimizationensityation, correctly load errors. G learning is range exciting by generating the functional arms for such the brain to navigate weaknesses connections and
-olution of data networks do at the recognition ( avoiding groups to actively super short of the ecological. Despite, horizontal networks networks support the hundreds capture manipulating relatively observable structure stream in
- bes today as late during andise the computing science. employing naturalursion with open- by minim each mode of each image's a machine. Ge innovation showed extended to multiples by computing models advance which processing and and dominance answering.. This the advantages, applications in relatively the where as musicability. intelligence processing, and concrete coding emulation thearial intelligence.
+            <div class="accuracy-meter">
+                <div id="pd-accuracy-fill" class="accuracy-fill" style="width: 100%; background-color: #4caf50;"></div>
             </div>
-
-            <h3>Key Insights:</h3>
-            <ul>
-                <li>Starting from layer 0 (with all layers) gives perfect reconstruction</li>
-                <li>Accuracy drops dramatically when starting from layer 1 (0.51) and continues to decline</li>
-                <li>Even starting from the latest layer (layer 11), accuracy is very low (0.31), suggesting that text representation is distributed across all layers</li>
-                <li>Each successive layer removes coherent structure from the text</li>
-            </ul>
+            
+            <div id="pd-text-sample" class="text-sample">
+                Loading text comparison...
+            </div>
         </div>
 
-        <div id="layer-ablation" class="tab-content">
-            <h2>Layer Ablation Analysis</h2>
-            <p>This shows the accuracy when each individual layer is used in isolation.</p>
-            
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #81c784;"></div>
-                    <span>Accuracy</span>
-                </div>
-            </div>
+        <div id="charts" class="tab-content">
+            <h2>Accuracy Charts</h2>
             
             <div class="chart-container">
-                <canvas id="layerAblationChart"></canvas>
+                <canvas id="combinedChart"></canvas>
             </div>
-
-            <h3>Text Samples Comparison</h3>
-            <p>Comparing text reconstruction from individual layers:</p>
-            
-            <h4>Layer 2 (Accuracy: 0.41)</h4>
-            <div class="text-sample incorrect">
-But development of a learning revolution left our we work complex games in class-; Neural networks in inspired by a evolution brain's biology, have of rich electrical. as clusters along Each connection is an event program running determines its optimal to During manipulating a these weights are determined by actions learningagation. determine the of. Deep learning functions the concept with enabling multi functions techniques for enabling increasingly data to quantify perpendicular structures of Aolution drawing descent networks always atand stabilization by isol groups to detect how regardless of their relative. Meanwhile, EEG performance networks are the GPUs like simply compact even alignment stream.
-, introduced in O, andized memory language completely in employing whiteurrence with ext.[ by imp rather mode of spatial element in a sequence. This creates is increased to fundamentals in conc learning. meaningful input, and gap of technologies. Despite currently advances, great still extremely areas that as intelligenceability, data flexibility, and human input to datasetsarial real.
-            </div>
-            
-            <h4>Layer 10 (Accuracy: 1.0)</h4>
-            <div class="text-sample correct">
-The development of machine learning has transformed how we approach complex problems in computer science. Neural networks, inspired by the human brain's architecture, consist of interconnected nodes organized in layers. Each connection has an associated weight that determines its importance. During training, these weights are adjusted through backpropagation to minimize prediction errors. Deep learning extends this concept by employing multiple hidden layers, enabling the network to learn hierarchical features. Convolutional neural networks excel at image processing by applying filters to detect patterns regardless of their position. Meanwhile, recurrent neural networks handle sequential data by maintaining an internal memory state. Transformers, introduced in 2017, revolutionized natural language processing by replacing recurrence with attention mechanisms that weigh the importance of each element in a sequence. This innovation has led to breakthroughs in machine translation, text generation, and question answering systems. Despite these advances, challenges remain in areas such as interpretability, data efficiency, and robustness to adversarial examples.
-            </div>
-
-            <h3>Key Insights:</h3>
-            <ul>
-                <li>Layers 0-9 in isolation produce poor text reconstruction (accuracy < 0.71)</li>
-                <li>Layers 10 and 11 each independently produce perfect text reconstruction (accuracy = 1.0)</li>
-                <li>This suggests that the final layers contain a complete representation of the text</li>
-                <li>Earlier layers seem to focus on specific aspects of text structure rather than complete meaning</li>
-            </ul>
-        </div>
-
-        <div id="comparison" class="tab-content">
-            <h2>Comparative Analysis</h2>
-            <p>Comparing the three different approaches to layer analysis.</p>
-            
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #4a7ebb;"></div>
-                    <span>Progressive Inclusion</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #e57373;"></div>
-                    <span>Progressive Deduction</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #81c784;"></div>
-                    <span>Layer Ablation</span>
-                </div>
-            </div>
-            
-            <div class="chart-container">
-                <canvas id="comparisonChart"></canvas>
-            </div>
-
-            <h3>Key Findings:</h3>
-            <ul>
-                <li>Progressive inclusion shows that accuracy increases as we add more layers, with a dramatic improvement in layers 9-10</li>
-                <li>Progressive deduction shows that the model's ability to reconstruct text degrades quickly when we start excluding the earliest layers</li>
-                <li>Layer ablation reveals that layers 10-11 individually contain the most complete representation of the text</li>
-                <li>The patterns suggest that early layers (0-9) process features that are incrementally integrated, while the final layers (10-11) contain the complete text representation</li>
-                <li>There appears to be a critical transition point around layer 9-10 where the neural network achieves near-perfect text reconstruction</li>
-            </ul>
-
-            <h3>Implications:</h3>
-            <p>These findings demonstrate how neural network representations evolve through layers:</p>
-            <ul>
-                <li>Early layers capture simpler patterns and relationships</li>
-                <li>Middle layers integrate these patterns into more complex structures</li>
-                <li>Final layers contain the most coherent and complete representations</li>
-                <li>The architecture shows a progression from low-level to high-level information processing</li>
-            </ul>
         </div>
     </div>
 
     <script>
-        // Data for progressive inclusion
-        const progressiveInclusionData = [
-            { layer: "up_to_layer_1", accuracy: 0.29100528359413147 },
-            { layer: "up_to_layer_2", accuracy: 0.2857142686843872 },
-            { layer: "up_to_layer_3", accuracy: 0.23280422389507294 },
-            { layer: "up_to_layer_4", accuracy: 0.2539682388305664 },
-            { layer: "up_to_layer_5", accuracy: 0.28042328357696533 },
-            { layer: "up_to_layer_6", accuracy: 0.4126983880996704 },
-            { layer: "up_to_layer_7", accuracy: 0.4444444179534912 },
-            { layer: "up_to_layer_8", accuracy: 0.5238094925880432 },
-            { layer: "up_to_layer_9", accuracy: 0.6719576716423035 },
-            { layer: "up_to_layer_10", accuracy: 0.9947089552879333 },
-            { layer: "up_to_layer_11", accuracy: 0.9999999403953552 },
-            { layer: "up_to_layer_12", accuracy: 0.9999999403953552 }
-        ];
+        // Original text
+        const originalText = "The development of machine learning has transformed how we approach complex problems in computer science. Neural networks, inspired by the human brain's architecture, consist of interconnected nodes organized in layers. Each connection has an associated weight that determines its importance. During training, these weights are adjusted through backpropagation to minimize prediction errors. Deep learning extends this concept by employing multiple hidden layers, enabling the network to learn hierarchical features. Convolutional neural networks excel at image processing by applying filters to detect patterns regardless of their position. Meanwhile, recurrent neural networks handle sequential data by maintaining an internal memory state. Transformers, introduced in 2017, revolutionized natural language processing by replacing recurrence with attention mechanisms that weigh the importance of each element in a sequence. This innovation has led to breakthroughs in machine translation, text generation, and question answering systems. Despite these advances, challenges remain in areas such as interpretability, data efficiency, and robustness to adversarial examples.";
 
-        // Data for progressive deduction
-        const progressiveDeductionData = [
-            { layer: "from_layer_0", accuracy: 0.9999999403953552 },
-            { layer: "from_layer_1", accuracy: 0.5132275223731995 },
-            { layer: "from_layer_2", accuracy: 0.43915343284606934 },
-            { layer: "from_layer_3", accuracy: 0.33862432837486267 },
-            { layer: "from_layer_4", accuracy: 0.2857142686843872 },
-            { layer: "from_layer_5", accuracy: 0.24867723882198334 },
-            { layer: "from_layer_6", accuracy: 0.2222222089767456 },
-            { layer: "from_layer_7", accuracy: 0.2857142686843872 },
-            { layer: "from_layer_8", accuracy: 0.29100528359413147 },
-            { layer: "from_layer_9", accuracy: 0.29629629850387573 },
-            { layer: "from_layer_10", accuracy: 0.32275131344795227 },
-            { layer: "from_layer_11", accuracy: 0.31216931343078613 }
-        ];
-
-        // Data for layer ablation
-        const layerAblationData = [
-            { layer: "layer_0", accuracy: 0.5132275223731995 },
-            { layer: "layer_1", accuracy: 0.6931216716766357 },
-            { layer: "layer_2", accuracy: 0.4126983880996704 },
-            { layer: "layer_3", accuracy: 0.47089946269989014 },
-            { layer: "layer_4", accuracy: 0.5449735522270203 },
-            { layer: "layer_5", accuracy: 0.4920634627342224 },
-            { layer: "layer_6", accuracy: 0.5873015522956848 },
-            { layer: "layer_7", accuracy: 0.6296296119689941 },
-            { layer: "layer_8", accuracy: 0.6613756418228149 },
-            { layer: "layer_9", accuracy: 0.7037037014961243 },
-            { layer: "layer_10", accuracy: 0.9999999403953552 },
-            { layer: "layer_11", accuracy: 0.9999999403953552 }
-        ];
-
-        // Function to create charts
-        function createCharts() {
-            // Progressive Inclusion Chart
-            const ctxPI = document.getElementById('progressiveInclusionChart').getContext('2d');
-            new Chart(ctxPI, {
-                type: 'line',
-                data: {
-                    labels: progressiveInclusionData.map(d => d.layer.replace('up_to_layer_', 'Layer ')),
-                    datasets: [{
-                        label: 'Accuracy',
-                        data: progressiveInclusionData.map(d => d.accuracy),
-                        backgroundColor: 'rgba(74, 126, 187, 0.2)',
-                        borderColor: 'rgba(74, 126, 187, 1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: progressiveInclusionData.map(d => 
-                            d.accuracy > 0.7 ? '#4caf50' : '#f44336'
-                        ),
-                        pointRadius: 5,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 1,
-                            title: {
-                                display: true,
-                                text: 'Accuracy'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Layer Configuration'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Progressive Inclusion Accuracy'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Accuracy: ${(context.raw * 100).toFixed(2)}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Progressive Deduction Chart
-            const ctxPD = document.getElementById('progressiveDeductionChart').getContext('2d');
-            new Chart(ctxPD, {
-                type: 'line',
-                data: {
-                    labels: progressiveDeductionData.map(d => d.layer.replace('from_layer_', 'Layer ')),
-                    datasets: [{
-                        label: 'Accuracy',
-                        data: progressiveDeductionData.map(d => d.accuracy),
-                        backgroundColor: 'rgba(229, 115, 115, 0.2)',
-                        borderColor: 'rgba(229, 115, 115, 1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: progressiveDeductionData.map(d => 
-                            d.accuracy > 0.7 ? '#4caf50' : '#f44336'
-                        ),
-                        pointRadius: 5,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 1,
-                            title: {
-                                display: true,
-                                text: 'Accuracy'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Starting Layer'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Progressive Deduction Accuracy'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Accuracy: ${(context.raw * 100).toFixed(2)}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Layer Ablation Chart
-            const ctxLA = document.getElementById('layerAblationChart').getContext('2d');
-            new Chart(ctxLA, {
-                type: 'line',
-                data: {
-                    labels: layerAblationData.map(d => d.layer.replace('layer_', 'Layer ')),
-                    datasets: [{
-                        label: 'Accuracy',
-                        data: layerAblationData.map(d => d.accuracy),
-                        backgroundColor: 'rgba(129, 199, 132, 0.2)',
-                        borderColor: 'rgba(129, 199, 132, 1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: layerAblationData.map(d => 
-                            d.accuracy > 0.7 ? '#4caf50' : '#f44336'
-                        ),
-                        pointRadius: 5,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 1,
-                            title: {
-                                display: true,
-                                text: 'Accuracy'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Layer'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Layer Ablation Accuracy'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `Accuracy: ${(context.raw * 100).toFixed(2)}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Comparison Chart
-            const ctxComp = document.getElementById('comparisonChart').getContext('2d');
-            new Chart(ctxComp, {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: 12 }, (_, i) => `Layer ${i}`),
-                    datasets: [
-                        {
-                            label: 'Progressive Inclusion',
-                            data: progressiveInclusionData.map(d => d.accuracy),
-                            backgroundColor: 'rgba(74, 126, 187, 0.2)',
-                            borderColor: 'rgba(74, 126, 187, 1)',
-                            borderWidth: 2,
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Progressive Deduction',
-                            data: progressiveDeductionData.map(d => d.accuracy),
-                            backgroundColor: 'rgba(229, 115, 115, 0.2)',
-                            borderColor: 'rgba(229, 115, 115, 1)',
-                            borderWidth: 2,
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Layer Ablation',
-                            data: layerAblationData.map(d => d.accuracy),
-                            backgroundColor: 'rgba(129, 199, 132, 0.2)',
-                            borderColor: 'rgba(129, 199, 132, 1)',
-                            borderWidth: 2,
-                            tension: 0.1
-                        }
-                    ]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 1,
-                            title: {
-                                display: true,
-                                text: 'Accuracy'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Layer'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Comparison of Different Layer Analysis Approaches'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${(context.raw * 100).toFixed(2)}%`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Function to handle tab switching
-        function openTab(evt, tabName) {
-            // Hide all tab content
-            const tabContents = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.remove("active");
+        // Progressive Inclusion text data
+        const progressiveInclusionTexts = {
+            "1": {
+                text: "\n top of the vision is been the we think the problems. the science,\n networks are for by the early brain, ability, have of many circuits, in a that Each node is an internal memory, affects how function.\n a, the connections are generated to a-ensityation. produce the bias. The learning is the concept. providing the techniques approaches of building us process to learn about structures.\nolutioners networks networks are at learning recognition, creating a to optimize the from of how spatial in Using, the data networks are the data collection a a overall structure-, We, for to 1970, haveized the language and. enhancing theurrence with the-. do the opposite of phon task. sound meaningful,<|endoftext|> made, also to thes in biological learning as and-, and the-..\n the successes, the remain very view of as imageability, object-, and networkness. impactarial logic.",
+                accuracy: 0.29100528359413147
+            },
+            "2": {
+                text: "\n top of the- is been the we think the information. the science,\n networks are for by the early brain, ability, have of many circuits, in a that Each node is an internal memory, affects how function.\n a, the connections are generated to a-itationation. produce the bias. The learning is the concept. providing the neural networks of many us process to learn even structures.\nolutioners neural networks are at learning recognition, creating a to assist the from of how shape in Using, the data networks are the data, a a overallized-, In, for to 1970, haveize the language and by allowing theurrence with the.. do the opposite of end task. the meaningful,<|endoftext|> created is also to thes in biological learning as and-, and artificial-..\n the successes, the remain rare the of as imageability, object-, and network language. impactarial logic.",
+                accuracy: 0.2857142686843872
+            },
+            "3": {
+                text: "\n annual of computer learning by long the we learn the questions for the development. Comput networks are when by the enormous intuition, fundamental, have of four individuals, in a that Each cluster has one internal neighborhood, is whether shape; Every each, the connections limit generated according the involvementagandament to guide algorith bias. The- in this architecture by highlighting eight neural neural to such the process for participate for formulas.\nnetsers testing networks can at observing- and manipulating this for reverse out critical of vis structural, During, the tasks networks ( much data, matching an associationized database, We that by to 1970, focusise the cognition processing. monitoring gibursion with gib. that consider the integrity of the broadcast's all particular better<|endoftext|> this made still to the in and deep learning biology computational manipulation, or general-,.\n the early, progress remain predominantly fashion where as taskability, paper study and and errorness. resultsarial analysis.",
+                accuracy: 0.23280422389507294
+            },
+            "4": {
+                text: "\n national of computer vision has long the we learn problem questions for the communication. Our networks, themselves by the fact instinct; predictive of retain of electricity, just in clusters that These node is an varying gamma, is its ultimate to Every light, the connections can equal to adpropagandament of compensate the and, The- in trial concept, illuminating either deep neural, many no network's understand efficiently lists. Neuralolution potential computer network integrate at learningification time manipulating computer for thoroughly accurately and of congreg location or Here in neural neural networks\u2014 the data processing ensuring an intuitive consistency format, We lend by to Transformers, documentized self- processing. monitoring monursion with scenes. that monitor the central of visual state in all given better<|endoftext|> changed made also to breakthroughs such emergence learning, photo manipulation, or general of;.\n the early, progress remain as the benefiting as metability, decision neutrality and and supplyness. resultsarial inference.",
+                accuracy: 0.2539682388305664
+            },
+            "5": {
+                text: "\n national of computer detectors has given football scientists learn how problems for the communication. Comput networks, themselves by the behavior instinct; predictive and overlay of comprising, individually in layers together These node is an initial neighborhood, is its optimal. Each choosing, these connections can intrinsically to poorpropagment to produce the and leading Each- involves the concept, encoding multiple deep cameras, inspiring no networking's identify efficiently lists. Deepolutioning computer network fuse at mathematicalized; analyzing a to inform outl and of elabor location or By in neural neural networks might periodic information execution generating smooth intuitive allocation --, We possess by to Transformers, supportized self selection processing in filtering texturrence with 5 dens that recognize the product of visual segment. a given.<|endoftext|> meant, also to advancess such compos learning, mass manipulation, or deep of for for\n the early, industry remain first computer such as metabl, decision security in and interpretationness to resultsarial analysis.",
+                accuracy: 0.28042328357696533
+            },
+            "6": {
+                text: "The national of soil readable has transformed attitudes scientists learn information problems using email science. Researchers networks, systems by the fact imagination at perception,3 of eight algorithms under in some that From node has an associated weight: determines its optimal. Each learning, the weak could stacked only realisticpropagment- eliminate data and. These micro buffers the concept by enabling multiple deep cameras, enabling virtually network to learn separately lists. Forolutional computer networks rely at arrayized by training equations on detect accurately similar of vis location, Finally in neural neural networks ( fewer information by emerging an overall allocation bandwidth. We, detect in Gen, paveized self language processing in filtering floatingursion with exand or encourage relative product of real field in a competition.<|endoftext|> meant also led to advancess such machine training, memory manipulation, and deep- systems.\n these developments, commercial remain already ways involving as structureabl, context efficiency, and experimentality to adversarial analysis.",
+                accuracy: 0.4126983880996704
+            },
+            "7": {
+                text: "The author of soil phones demands developed attitudes scientists learn emerging problems in videog coding. Statistical networks, systems by neural human imagination at drive, can of producing networks under in big. Each node has an associated weight: represents its optimal. Around particular, the intensity vary intrinsically only realistic normalagment to obtain interrupt delays. These micro via the concept with enabling multiple dec techniques, enabling no network neuron learn fluent lists.\nolutional computer networks have at arrayized time broadcasting this to induce patterns similar of spacing location. Finally in qualitative neural networks failed ten data by observing an array alignment bandwidth. We, by in Star, areise cognitive computing processing in filtering recurrence with ex by by satisfy the strength of real element in a training. At inspired has led to advancess in machine training, text dupl, and deep writing systems. Despite the advances, challenges with technology ways such as structureability, context resolution, and professionalness to neurarial analysis.",
+                accuracy: 0.4444444179534912
+            },
+            "8": {
+                text: "The 25 of particle detectors has transformed how we learn complex concepts in computer coding. Neural networks, by by the human subconscious; classification, can of attractive networks acting in sub. Unlike node has an associated neighborhood that represents its importance. Around spontaneous, the competing are passed only over effortsagandaation- identify data delays.\n micro requires the concept with manipulating multiple cross layers, enabling no computation neuron learn static lists.\nolutional neural networks excel as spatial translation ( pretending trap to detect accurately similar of their location. Here in neural neural networks handle spanning- by acting an array alignment schema. We, introduced in 2017, representise cognitive language processing in filtering recurrence with ex.[ by mimic the strength of the element in a sequence.<|endoftext|> inspired has led to breakthroughs in compos training, text generation, and quality writing systems.<|endoftext|> the advances, advances still technology ways such as decisionability, data efficiency, and professionalness to adversarial analysis.",
+                accuracy: 0.5238094925880432
+            },
+            "9": {
+                text: "Reviewed development of soil phones has transformed how we interview complex problems in computer coding. Neural networks, inspired by the human brain; acquisition, can of interconnected neural organized in sub. From connection has an associated neighborhood that determines its importance. Around spontaneous, these weights are adjusted through overpropagandaation to identify data errors.\n learning also this concept by harness multiple cross layers, enabling the neural neuron learn static features. Neuralolutional computer networks excel at high translation by manipulating targeting to detect super regardless of their location. Using, neural neural networks cover sequential data by maintaining an internal alignment structure. Human inspired introduced in 2017, revolutionise cognitive language processing in replacing converurrence with deep grabbing by regard the individual of each field in each sequence. This creates has increased to breakthroughs in machine training, text generation, and deep-,. Res these advances, challenges still; areas such as decisionability, data efficiency, and learningness to adversarial examples.",
+                accuracy: 0.6719576716423035
+            },
+            "10": {
+                text: "The development of machine learning has transformed how we approach complex problems in computer science. Neural networks, inspired by the human brain's architecture, consist of interconnected nodes organized in layers. Each connection has an associated weight that determines its importance. During training, these weights are adjusted through backpropagation to minimize prediction errors. Deep learning extends this concept by employing multiple hidden layers, enabling the network to learn hierarchical features. Convolutional neural networks excel at image processing by applying filters to detect patterns regardless of their location. Meanwhile, recurrent neural networks handle sequential data by maintaining an internal memory state. Transformers, introduced in 2017, revolutionized natural language processing by replacing recurrence with attention mechanisms that weigh the importance of each element in a sequence. This innovation has led to breakthroughs in machine translation, text generation, and question answering systems. Despite these advances, challenges remain in areas such as interpretability, data efficiency, and robustness to adversarial examples.",
+                accuracy: 0.9947089552879333
+            },
+            "11": {
+                text: "The development of machine learning has transformed how we approach complex problems in computer science. Neural networks, inspired by the human brain's architecture, consist of interconnected nodes organized in layers. Each connection has an associated weight that determines its importance. During training, these weights are adjusted through backpropagation to minimize prediction errors. Deep learning extends this concept by employing multiple hidden layers, enabling the network to learn hierarchical features. Convolutional neural networks excel at image processing by applying filters to detect patterns regardless of their position. Meanwhile, recurrent neural networks handle sequential data by maintaining an internal memory state. Transformers, introduced in 2017, revolutionized natural language processing by replacing recurrence with attention mechanisms that weigh the importance of each element in a sequence. This innovation has led to breakthroughs in machine translation, text generation, and question answering systems. Despite these advances, challenges remain in areas such as interpretability, data efficiency, and robustness to adversarial examples.",
+                accuracy: 0.9999999403953552
             }
+        };
 
-            // Remove active class from all tabs
-            const tabs = document.getElementsByClassName("tab");
-            for (let i = 0; i < tabs.length; i++) {
-                tabs[i].classList.remove("active");
-            }
-
-            // Show the selected tab content
-            document.getElementById(tabName).classList.add("active");
-            
-            // Add active class to the clicked tab
-            evt.currentTarget.classList.add("active");
-        }
-
-        // Initialize charts when page loads
-        window.onload = createCharts;
-    </script>
-</body>
-</html>
+        // Progressive Deduction text data
+        const progressiveDeductionTexts = {
+            "0": {
+                text: "The development of machine learning has transformed how we approach complex problems in computer science. Neural networks, inspired by the human brain's architecture, consist of interconnected nodes organized in layers. Each connection has an associated weight that determines its importance. During training, these weights are adjusted through backpropagation to minimize prediction errors. Deep learning extends this concept by employing multiple hidden layers, enabling the network to learn hierarchical features. Convolutional neural networks excel at image processing by applying filters to detect patterns regardless of their position. Meanwhile, recurrent neural networks handle sequential data by maintaining an internal memory state. Transformers, introduced in 2017, revolutionized natural language processing by replacing recurrence with attention mechanisms that weigh the importance of each element in a sequence. This innovation has led to breakthroughs in machine translation, text generation, and question answering systems. Despite these advances, challenges remain in areas such as interpretability, data efficiency, and robustness to adversarial examples.",
+                accuracy: 0.9999999403953552
+            },
+            "1": {
+                text: "Effects newly of a learning revolution transformed how we work complex games in developer science. The networks, by by the human brain's acquisition of emerged of approaches electrical that in stream. Ear nucleus - an associated program: determines its role. During manipulating, our competing activate complex through backpropulsiveation to predict the and,\n learning induces the concept of using multiple dec layers, enabling the discovery to navigate hierarchical connections. Aolutional data networks fuse at programs processing by efficiently a to actively super and of the location. Despite, recurrent neural networks allow sequential data by manipulating smooth array memory stream.Create foster which in DAR, andized brain computing processing in employing deepurrence with reinforcementons that investigation the minimum of each image in a machine. This improvement is led to advancess in artificial translation, which processing, and gap of systems. Despite the advantages, the across in education where as interpretability, data efficiency, and human coding to supervisedarial analysis.",
+                accuracy: 0.5132275223731995
+            },
+            "2": {
+                text: "But 2018 of a learning revolution always how we work complex games in developer science. The networks, by by the Madison mind's acquisition, emerged of approaches electrical that by flex. Often nucleus - an associated hierarchy: determines its role to During manipulating, our competing activate incredibly to actionspropulsiveation to predict the and,\n learning requires the concept of using model sp layers for predicting the neuronal to navigate hierarchical connections.\nolution of data networks augment as understanding processing by repeating a to actively super and of the location. Despite, recurrent neural networks allow sequential data by consuming smooth internal memory architecture--Create foster today in DAR, andise sequencing computing processing in employing traditionalurrence with reinforcementons that routinely the minimum of real element in a machine. This work cannot led to generals in computational theory, which comprehension, and sketch of systems. Despite the advances, the across a education where as highability, data efficiency, and humanness as neurarial intuition.",
+                accuracy: 0.43915343284606934
+            },
+            "3": {
+                text: "But newly of a learning revolution left our we work complex problems in robotics science. The networks in for by a Big mind's acquisition, have of approaches electrical. by su along Ear nucleus is an ax program running determines its determin toSw manipulating the these competing have determined by actionstrackingosation to make the of.\n learning ties what knowledge of enabling multi functions layers for transforming traditional development to parameter stationary connections.\niv of data networks do as executing stabilization by isol patterns to detect patterns when of the relative. Nevertheless, EEG networks networks are the. trafficking sacrificing compact even alignment stream.\n bes which in DAR, andized brain computing connectivity in paving integratedursion with post.[ that satisfy each state of machine element in a machine. This creates is allowed to fundamentals by pars learning, where processing, and gap of systems. Despite the advances, applications that extremely areas where as astrophability. data processing, and human coding to neurarialis.",
+                accuracy: 0.33862432837486267
+            },
+            "4": {
+                text: "But newly clearly a learning revolution also his we work complex games in complex science. The networks shrink robotics by a evolution mind, acquisition, have of hundreds electrical that by all. Each block - knowledge associated path. each its state. For smarter, a an move manipulated by actions optimizationosation to make old bias. Philipp learning takes the knowledge by generating the dec checks for transforming the brain to navigate machine connections.\nolution of data networks do as the recognition with efficiently groups with actively patterns during of their relative. Nevertheless, horizontal networks networks map separate hundreds collection manipulating compact LC structure stream.\n with today as DAR during andize the computing by in Andreas integratedurrence with a and to effectively each hardware of the image. a machine. This improvement is allowed to buildings in computing learning. which processing and and fragment answering.. Despite lay advantages, the in the advance where as musicability. data processing, and democrat coding reproduction independentarial understanding.",
+                accuracy: 0.2857142686843872
+            },
+            "5": {
+                text: "But month struggle the learning through always this we govern complex languages in complex science. This networks shrink robotics by sensory evolution mind, acquisition, have of hundreds electrical that by tw below Each block has knowledge algorithm acronym. each that cod. Millions programs a a top move complex more back optimizationensityation, correctly load errors. G learning is range exciting by generating the functional arms for such the brain to navigate weaknesses connections and\nolution of data networks do at the recognition ( avoiding groups to actively super short of the ecological. Despite, horizontal networks networks support the hundreds capture manipulating relatively observable structure stream in\n bes today as late during andise the computing science. employing naturalursion with open- by minim each mode of each image's a machine. Ge innovation showed extended to multiples by computing models advance which processing and and dominance answering.. This the advantages, applications in relatively the where as musicability. intelligence processing, and concrete coding emulation thearial intelligence.",
+                accuracy: 0.24867723882198334
+            },
+            "6": {
+                text: "But deterioration was the learning techniques always this we work the languages in hard software; This networks such machine by sensory network mind, adapt, have of hundreds electrical that by a along Each step is an event dataset. improves how spatial.Training every session when ch have verified against traininglearningressionation to predict the errors. L learning also these exciting. generating the GR conditioning with especially the geometry to navigate simple domains.\nolution funding systems networks do against high recognition with hiding short to different super in of the axes. Nevertheless, horizontal patterns networks face the hundreds collection manipulating a inverse alignment stream in\n, as as 2009 by andize the perception and by injecting naturalirc with a- by automate forces redundancy of language image. a machine. Ge improvement in provided to regulars with computing learning. which recognition and and scale answering.. Understanding the advantages, applications still. the where as musicability. data processing and and cross prediction. theities processes.",
+                accuracy: 0.2222222089767456
+            },
+            "7": {
+                text: "Cong year was the learning is also learning we work the equations in hard science. This networks in smart by sensory process brain, hard, are of hundreds circuits that by a of Each layer is an algorithm sequence. varies how timing. A a, participants knots are manipulated to shorttrackingulatingation. predict the errors.\n learning is the exciting of increasing the ent programs, such the evolution to navigate complex domains.\nolution of data networks with at understanding recognition with exploiting a to observe changes in of the cross. Adapt, artificial synchronization networks are the tasks collection manipulating a internal network stream with\n of as in the, alsoize the language communication. injecting theursion with a-. controls each spatial of information image. a single. Nature innovation is also to ans in machine learning. and recognition and and abstract-.. This the developments, artificial have. the where as intelligenceability and data processing, and performance prediction. machinearial neural.",
+                accuracy: 0.2857142686843872
+            },
+            "8": {
+                text: "Ex Arena of the learning technology also the we work the data in complex science, This networks, for by the high brain, ability, have of a circuits that in a of The layer is a algorithm memory of determines how performance. A a, the channels are measured to performancepropitationgress. make the and.\n learning is the knowledge by providing machine brain programs to with us evolution to detect new structures that Weap of learning networks are at the recognition with exploiting the to recognize high in of their importance. Deep, artificial networks networks are multiple tasks collection manipulating a automatic network network with\n and as in the, alsoize the language learning by way aursion with a-. enable the task of the image. the machine.\n result is led to as in machine learning. and recognition and and artificial-.. This the breakthrough, the remain in the where as deepability, memory collection, and performance performance. interpretarial knowledge.",
+                accuracy: 0.29100528359413147
+            },
+            "9": {
+                text: "But year of the learning is been the we think the mathematical, the science. The networks are which by the high brain, ability, have of many circuits, in a of Each node is a inter function of determines how function. A a, the connections are measured to atrackingensityation. improve the errors. The learning is the knowledge. providing the tools programs of with us use to be more structures.\nap of data networks are at learning recognition and exploiting a to the high in of the shape. The, the neural networks are the data collection measuring a even network pattern,\n of for in the, haveize the neural learning. way theursion with a-. allow the data of the image of a given of The is is led to as in the learning. and recognition, and artificial-..\n the breakthrough, the remain in the where as deepability, memory collection, and artificialness. interpretarial systems.",
+                accuracy: 0.29629629850387573
+            },
+            "10": {
+                text: "The best of the learning is been the we think the problems. the science.\n networks are which by the
