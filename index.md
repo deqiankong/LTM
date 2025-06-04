@@ -1,4 +1,5 @@
 ---
 title: home
-redirect_to: /ltm
+redirect_from: "/"
+redirect_to: "/ltm/"
 ---
