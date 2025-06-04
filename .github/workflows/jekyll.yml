@@ -1,5 +1,6 @@
-# File: .github/workflows/deploy‐jekyll.yml
-name: Build & Deploy Jekyll (with Mermaid)
+# .github/workflows/deploy-jekyll.yml
+
+name: Build & Deploy Jekyll
 
 on:
   push:
@@ -11,22 +12,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Check out your repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2) Set up Ruby + Bundler (with caching)
-      - name: Set up Ruby and Bundler
+      - name: Set up Ruby 3.1
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
-          bundler-cache: true    # <<–– this automatically runs `bundle install` and caches ~/.bundle
+          ruby-version: 3.1    # <— use Ruby 3.1+ so Bundler 2.6.9 can install
+          bundler-cache: true
 
-      # 3) Build the Jekyll site (this will load jekyll-diagrams, etc. from your Gemfile)
       - name: Build site with Jekyll
         run: bundle exec jekyll build --destination public
 
-      # 4) Deploy the generated _site (now in “public/”) to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
