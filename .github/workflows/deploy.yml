@@ -18,6 +18,8 @@ jobs:
       with:
         ruby-version: '3.2'
         bundler-cache: true
+    - name: Ensure x86_64-linux is in Gemfile.lock
+      run: bundle lock --add-platform x86_64-linux
     - name: Install deps
       run: |
         npm install -g mermaid.cli
