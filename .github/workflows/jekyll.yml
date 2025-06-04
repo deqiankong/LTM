@@ -1,11 +1,10 @@
-# File: .github/workflows/deploy-pages.yml
-
-name: “Build and Deploy Jekyll with Mermaid”
+# File: .github/workflows/deploy‐jekyll.yml
+name: Build & Deploy Jekyll (with Mermaid)
 
 on:
   push:
     branches:
-      - main   # whenever you push to main, rebuild & deploy
+      - main
 
 jobs:
   build-and-deploy:
@@ -13,33 +12,24 @@ jobs:
 
     steps:
       # 1) Check out your repository
-      - name: “Checkout repository”
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2) Set up Ruby (choose the version you need; GitHub Pages uses 2.7.x by default)
-      - name: “Set up Ruby”
+      # 2) Set up Ruby + Bundler (with caching)
+      - name: Set up Ruby and Bundler
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
+          bundler-cache: true    # <<–– this automatically runs `bundle install` and caches ~/.bundle
 
-      # 3) Install Bundler, then your Gemfile’s dependencies
-      - name: “Install dependencies”
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-
-      # 4) Run the actual Jekyll build (which will load jekyll-diagrams and process <mermaid>)
-      - name: “Build site with Jekyll”
+      # 3) Build the Jekyll site (this will load jekyll-diagrams, etc. from your Gemfile)
+      - name: Build site with Jekyll
         run: bundle exec jekyll build --destination public
 
-      # 5) Deploy the built site (`public/`) to GitHub Pages via the actions‑gh‑pages action
-      - name: “Deploy to GitHub Pages”
+      # 4) Deploy the generated _site (now in “public/”) to GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          publish_branch: gh-pages    # or "main" if you want to publish from main/docs/
-          # If you’d rather publish into main:/docs, you could do:
-          # publish_branch: main
-          # publish_dir: ./public
-          # publish_dir: ./public
+          publish_branch: gh-pages
+          publish_dir: public
