@@ -1,5 +1,5 @@
 ---
 title: home
 redirect_from: "/"
-redirect_to: "/ltm/"
+redirect_to: "/blogs/ltm"
 ---
