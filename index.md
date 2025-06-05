@@ -1,4 +1,4 @@
 ---
 title: home
-redirect_to: "/blogs/ltm"
+redirect_to: "/ltm"
 ---
