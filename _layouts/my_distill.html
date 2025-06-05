@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- _layouts/distill.html -->
+<!-- _layouts/my_distill.html -->
 <html>
 
 <script>
@@ -22,7 +22,7 @@
     // getting stuff directly from Jekyll
     let publishedWhen = "{{ page.date | date: '%B %-d, %Y' }}";
     // let title = "{{ page.title }}";
-    let title = 'Latent Thought Model with Variational Bayes Inference-Time Computation';
+    let title = "{{ page.full_title }}";
     let description = "{{ page.description }}";
 
     {
@@ -36,7 +36,6 @@
   author = {${authorsBibtex}},
   title = {${title}},
   abstract = {${description}},
-  year = {2025},
   date = {${publishedWhen}},
   url  = {${window.location.href}}
 }
@@ -130,7 +129,7 @@ ${academicLFI}, "${title}", ICLR Blogposts, 2025.
     <div class="post distill">
 
       <d-title>
-        <h1>{{ page.title }}</h1>
+        <h1>{{ page.pretty_title }}</h1>
         <p>{{ page.description }}</p>
       </d-title>
 
